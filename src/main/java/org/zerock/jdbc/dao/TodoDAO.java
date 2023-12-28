@@ -3,20 +3,18 @@ package org.zerock.jdbc.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import lombok.Cleanup;
 
 public class TodoDAO {
+    public String getTime() throws Exception {
+        @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+        @Cleanup PreparedStatement preparedStatement = connection.prepareStatement("SELECT now()");
+        @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
 
-    String now = null;
-    public String getTime() {
-        try (Connection connection = ConnectionUtil.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT now()");
-        ResultSet resultSet = preparedStatement.executeQuery();
-        ) {
-            resultSet.next();
-            now = resultSet.getString(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        resultSet.next();
+
+        String now = resultSet.getString(1);
+
         return now;
     }
 }
