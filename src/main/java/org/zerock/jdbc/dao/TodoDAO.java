@@ -10,6 +10,8 @@ import java.util.List;
 
 import lombok.Cleanup;
 
+import javax.imageio.plugins.jpeg.JPEGImageReadParam;
+
 public class TodoDAO {
     public String getTime() throws Exception {
         @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
@@ -57,5 +59,24 @@ public class TodoDAO {
         }
 
         return list;
+    }
+
+    public TodoVO selectOne(Long tno) throws Exception {
+        String sqlQuery = "SELECT * FROM tbl_todo WHERE tno = ?";
+        @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+        @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+        preparedStatement.setLong(1, tno);
+        @Cleanup ResultSet resultSet = preparedStatement.executeQuery();
+
+        resultSet.next();
+
+        TodoVO vo = TodoVO.builder()
+                .tno(resultSet.getLong("tno"))
+                .title(resultSet.getString("title"))
+                .dueDate(resultSet.getDate("dueDate").toLocalDate())
+                .finished(resultSet.getBoolean("finished"))
+                .build();
+
+        return vo;
     }
 }
