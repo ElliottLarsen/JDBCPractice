@@ -38,6 +38,10 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.1.0'
+
+    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.0'
+
 }
 
 test {
