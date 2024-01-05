@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 
 public class MemberDAO {
     public MemberVO getWithPassword(String mid, String mpw) throws Exception {
-        String query = "SELECT mid, mpw, mname from tbl_mbmer where mid = ? and pwd = ?";
+        String query = "SELECT mid, mpw, mname from tbl_member where mid = ? and mpw = ?";
 
         MemberVO memberVO = null;
 
