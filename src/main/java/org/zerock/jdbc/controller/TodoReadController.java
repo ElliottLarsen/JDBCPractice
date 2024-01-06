@@ -6,6 +6,7 @@ import org.zerock.jdbc.service.TodoService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +24,47 @@ public class TodoReadController extends HttpServlet {
             TodoDTO todoDTO = todoService.get(tno);
 
             req.setAttribute("dto", todoDTO);
+
+            Cookie viewTodoCookie = findCookie(req.getCookies(), "viewTodos");
+            String todoListStr = viewTodoCookie.getValue();
+            boolean exists = false;
+            if (todoListStr != null && todoListStr.indexOf(tno + "-") >= 0) {
+                exists = true;
+            }
+            log.info("exists: " + exists);
+
+            if (!exists) {
+                todoListStr += tno + "-";
+                viewTodoCookie.setValue(todoListStr);
+                viewTodoCookie.setMaxAge(60*60*24);
+                viewTodoCookie.setPath("/");
+                resp.addCookie(viewTodoCookie);
+            }
+
             req.getRequestDispatcher("/WEB-INF/todo/read.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new ServletException("Read Error");
         }
+    }
+
+    private Cookie findCookie(Cookie[] cookies, String cookieName) {
+        Cookie targetCookie = null;
+
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie ck:cookies) {
+                if(ck.getName().equals(cookieName)) {
+                    targetCookie = ck;
+                    break;
+                }
+            }
+        }
+        if (targetCookie == null) {
+            targetCookie = new Cookie(cookieName, "");
+            targetCookie.setPath("/");
+            targetCookie.setMaxAge(60*60*24);
+        }
+
+        return targetCookie;
     }
 }
