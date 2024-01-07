@@ -7,10 +7,7 @@ import org.zerock.jdbc.service.MemberService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -39,6 +36,10 @@ public class LoginController extends HttpServlet {
                 String uuid = UUID.randomUUID().toString();
                 MemberService.INSTANCE.updateUuid(mid, uuid);
                 memberDTO.setUuid(uuid);
+                Cookie rememberCookie = new Cookie("remember-me", uuid);
+                rememberCookie.setMaxAge(60*60*24*7);
+                rememberCookie.setPath("/");
+                resp.addCookie(rememberCookie);
             }
             HttpSession session = req.getSession();
             session.setAttribute("loginInfo", memberDTO);
